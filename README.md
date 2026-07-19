@@ -1,5 +1,7 @@
 # CropVision AI
 
+Repository: https://github.com/zenithox-anuj/CROPVISIONAI
+
 Satellite-based crop disease detection and advisory platform for smallholder farmers,
 agronomists, and agricultural cooperatives.
 
