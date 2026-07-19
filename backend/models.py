@@ -1,9 +1,14 @@
 """CropVision AI - Data models (Mongo-friendly Pydantic)."""
 from datetime import datetime, timezone
 from typing import Any, Optional, List, Annotated
-from pydantic import BaseModel, Field, EmailStr, BeforeValidator, ConfigDict
+from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
 from bson import ObjectId
 import uuid
+
+try:
+    from pydantic import EmailStr
+except ImportError:  # pragma: no cover - fallback for environments without email-validator
+    EmailStr = str
 
 
 def _to_str(v: Any) -> str:
