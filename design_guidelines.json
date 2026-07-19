@@ -1,0 +1,157 @@
+{
+  "theme_strategy": {
+    "theme": "dark",
+    "rationale": "Cinematic and spectral visuals map perfectly to a dark 'command center' aesthetic. The dark theme allows 'spectral' colors (NDVI indices, heatmaps, alerts) to glow and pop, aligning with 'The Performance Pro' meets 'Organic & Earthy' archetype."
+  },
+  "typography": {
+    "heading_font": "Outfit",
+    "body_font": "Manrope",
+    "rationale": "Outfit provides a structural, modern, and tech-forward voice for the marketing and dashboard headers without feeling like a generic template. Manrope offers high legibility for dense data displays in the dashboard.",
+    "rules": [
+      "No Inter, Roboto, or Open Sans for headings.",
+      "Headings (>32px) must use tight letter spacing: tracking-tight.",
+      "Overlines/Labels must be Uppercase, tiny, and wide spacing: tracking-[0.2em].",
+      "Maximum H1 size is text-5xl to text-6xl. Do not exceed.",
+      "Line height: tight for headers (leading-none), loose for body (leading-relaxed)."
+    ]
+  },
+  "colors": {
+    "primary_archetype": "Earth & Spectral Neon Fusion",
+    "hsl_variables": {
+      "dark": {
+        "--background": "144 24% 5%",
+        "--foreground": "144 10% 96%",
+        "--card": "144 24% 7%",
+        "--card-foreground": "144 10% 96%",
+        "--popover": "144 24% 7%",
+        "--popover-foreground": "144 10% 96%",
+        "--primary": "142 76% 55%",
+        "--primary-foreground": "144 24% 5%",
+        "--secondary": "25 95% 53%",
+        "--secondary-foreground": "144 24% 5%",
+        "--muted": "144 15% 15%",
+        "--muted-foreground": "144 10% 65%",
+        "--accent": "144 15% 15%",
+        "--accent-foreground": "144 10% 96%",
+        "--destructive": "0 84% 60%",
+        "--destructive-foreground": "0 0% 100%",
+        "--border": "144 20% 12%",
+        "--input": "144 20% 12%",
+        "--ring": "142 76% 55%",
+        "--chart-1": "142 76% 55%",
+        "--chart-2": "0 84% 60%",
+        "--chart-3": "45 93% 47%",
+        "--chart-4": "199 89% 48%",
+        "--chart-5": "25 95% 53%"
+      }
+    },
+    "rules": [
+      "No pure black (#000000) or pure gray. Use the provided green-tinted dark variables.",
+      "No generic full-screen gradients.",
+      "Use text-shadow on text placed over images or maps.",
+      "Always explicitly set text color on hover (e.g., hover:bg-slate-900 hover:text-white)."
+    ]
+  },
+  "layouts": {
+    "marketing": {
+      "mode": "Mode A (Tetris Grid)",
+      "spacing": "Generous (p-8 to p-24, gap-8 to gap-12)",
+      "structure": "Asymmetrical overlapping elements, scroll-driven storytelling sections.",
+      "header": "Crystal Glassmorphism (backdrop-blur-xl bg-background/70 border-b border-white/10). No completely transparent headers."
+    },
+    "dashboard": {
+      "mode": "Mode B (High Density Grid)",
+      "spacing": "Tight (p-4, gap-4)",
+      "structure": "Map-first layout. The primary view should be a massive satellite map with side panels for data feeds and alerts.",
+      "cards": "Grid Borders (Technical Look). Flat solid backgrounds, 1px subtle borders, no soft shadows. Sharp edges."
+    },
+    "rules": [
+      "Containers with borders must have internal padding.",
+      "Mobile-first responsive grids.",
+      "Never center-align paragraphs or dense data."
+    ]
+  },
+  "surface_strategies": {
+    "marketing_header": "Crystal Glassmorphism: bg-[#0a110d]/70 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10 shadow-sm",
+    "dashboard_panels": "Grid Borders: flat solid background, border-r border-b border-border/40, zero radius or max 8px.",
+    "alerts": "Neumorphism with sharp 1px borders to ground them, high contrast text."
+  },
+  "motion_and_interactions": {
+    "libraries": [
+      "framer-motion",
+      "lenis"
+    ],
+    "marketing": "Lenis for smooth scrolling. GSAP or Framer Motion for scroll-triggered reveals, parallax floating elements.",
+    "dashboard": "Minimalist micro-interactions. Quick fade-ins for heatmaps and tooltips.",
+    "rules": [
+      "Do NOT use transition: all. Target specific properties.",
+      "Respect prefers-reduced-motion.",
+      "Stagger entrance animations for list items (alert feeds)."
+    ]
+  },
+  "3d_and_visuals": {
+    "marketing_hero": "react-globe.gl for a cinematic, 3D rotating earth showing satellite networks and connection nodes. Make background transparent to blend with UI.",
+    "dashboard_map": "react-map-gl for real-time 2D/3D field mapping. Use dark mode map tiles with glowing colored polygons (heatmaps) over the fields.",
+    "charts": "recharts wrapped in shadcn/ui components. Use spectral colors for data lines."
+  },
+  "accessibility_and_localization": {
+    "i18n": "Implement a clear English/Hindi toggle in the header. Use standard i18n libraries (like react-i18next).",
+    "contrast": "Ensure all text meets WCAG AA standards. Use the custom tinted variables.",
+    "testing": "All interactive elements MUST include a data-testid attribute in kebab-case, role-based."
+  },
+  "image_urls": {
+    "hero_backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1781816928201-ff564c99528a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjh8MHwxfHNlYXJjaHwyfHxzYXRlbGxpdGUlMjB2aWV3JTIwYWdyaWN1bHR1cmFsJTIwZmllbGRzfGVufDB8fHx8MTc4NDQzODcyOHww&ixlib=rb-4.1.0&q=85",
+        "category": "marketing_hero",
+        "description": "Satellite aerial view of agricultural fields (Use with heavy dark/gradient overlay for contrast, bg-black/50)"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1781816928287-e71d9a6c548c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwyfHxkcm9uZSUyMHZpZXclMjBmYXJtJTIwZmllbGRzJTIwaGFydmVzdHxlbnwwfHx8fDE3ODQ0Mzg3Mjh8MA&ixlib=rb-4.1.0&q=85",
+        "category": "dashboard_map_fallback",
+        "description": "Vibrant drone view of fields, can be used as a static fallback or UI section background"
+      }
+    ],
+    "human_element": [
+      {
+        "url": "https://images.unsplash.com/photo-1761839257870-06874bda71b5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwzfHxmYXJtZXIlMjB1c2luZyUyMHRhYmxldCUyMGFncmljdWx0dXJlfGVufDB8fHx8MTc4NDQzODcyOXww&ixlib=rb-4.1.0&q=85",
+        "category": "storytelling_section",
+        "description": "Farmer using tablet outdoors, brings the human tech element to the marketing page"
+      }
+    ]
+  },
+  "component_guidelines": {
+    "shadcn_ui": "Use standard shadcn components but heavily customize. Remove the default Vercel border-radius/shadows. Match the 'Grid Borders' sharp tech look.",
+    "toasts": "Use 'sonner' for toast notifications (alerts, upload status).",
+    "forms": "Use Shadcn Form, Input, Select for the image upload and settings views.",
+    "icons": "Use @phosphor-icons/react for high-end duotone tech icons."
+  },
+  "instructions_to_main_agent": [
+    "Read this entire JSON document carefully before starting implementation.",
+    "Implement the UI as a hybrid app: a marketing landing page AND a functional dashboard.",
+    "Setup React Router with two main flows: '/' (Marketing) and '/dashboard' (Operational).",
+    "Update tailwind.config.js with the provided HSL variables and font families.",
+    "Install required dependencies: framer-motion, lenis, react-globe.gl, react-map-gl, @phosphor-icons/react, recharts, react-i18next.",
+    "Do NOT use HTML input elements directly; strictly use Shadcn UI components for interactives.",
+    "Build the dashboard using a dense, cardless grid approach."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories = main agent will use placeholder text which is FORBIDDEN.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Use sonner for toasts, located in /app/src/components/ui/sonner.tsx.",
+    "All interactive and key informational elements MUST include a data-testid attribute to facilitate robust automated testing.",
+    "DO NOT use complete `transparent` background in header, overlays, any surface that has content under it."
+  ]
+}

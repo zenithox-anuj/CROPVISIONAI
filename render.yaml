@@ -1,0 +1,18 @@
+services:
+  - type: web_service
+    name: cropvision-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.server:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: MONGO_URL
+      - key: DB_NAME
+      - key: JWT_SECRET
+      - key: JWT_ALGORITHM
+      - key: ACCESS_TOKEN_MINUTES
+      - key: REFRESH_TOKEN_DAYS
+      - key: EMERGENT_LLM_KEY
+      - key: CORS_ORIGINS

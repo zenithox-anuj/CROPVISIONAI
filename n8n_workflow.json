@@ -1,0 +1,191 @@
+{
+  "name": "CropVision AI - Satellite Imagery Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cropvision-tile",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "New Satellite Tile",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.CROPVISION_API}}/api/n8n/ingest",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "x-api-key", "value": "={{$env.CROPVISION_INGEST_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "field_id", "value": "={{$json.field_id}}"},
+            {"name": "image_b64", "value": "={{$json.image_b64}}"}
+          ]
+        },
+        "options": {"retry": {"maxTries": 3, "waitBetweenTries": 2000}}
+      },
+      "id": "http-1",
+      "name": "Enqueue Inference Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": 5
+      },
+      "id": "wait-1",
+      "name": "Wait for Inference",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.CROPVISION_API}}/api/inference/jobs/{{$node[\"Enqueue Inference Job\"].json[\"job_id\"]}}",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Authorization", "value": "Bearer {{$env.CROPVISION_TOKEN}}"}
+          ]
+        }
+      },
+      "id": "http-2",
+      "name": "Poll Job Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {"value1": "={{$json.status}}", "operation": "equal", "value2": "succeeded"}
+          ]
+        }
+      },
+      "id": "if-1",
+      "name": "Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.CROPVISION_API}}/api/detections/{{$json.detection_id}}",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Authorization", "value": "Bearer {{$env.CROPVISION_TOKEN}}"}
+          ]
+        }
+      },
+      "id": "http-3",
+      "name": "Fetch Detection",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 220]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {"value1": "={{$json.severity}}", "operation": "equal", "value2": "critical"}
+          ]
+        }
+      },
+      "id": "if-2",
+      "name": "Critical?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1520, 220]
+    },
+    {
+      "parameters": {
+        "url": "https://api.twilio.com/2010-04-01/Accounts/{{$env.TWILIO_SID}}/Messages.json",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "From", "value": "whatsapp:{{$env.TWILIO_WHATSAPP_FROM}}"},
+            {"name": "To", "value": "whatsapp:{{$json.farmer_phone}}"},
+            {"name": "Body", "value": "={{$json.message_hi}}"}
+          ]
+        }
+      },
+      "id": "http-4",
+      "name": "Send WhatsApp Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1740, 160]
+    },
+    {
+      "parameters": {
+        "fromEmail": "{{$env.ALERT_FROM_EMAIL}}",
+        "toEmail": "{{$env.AGRONOMIST_EMAIL}}",
+        "subject": "CRITICAL: Field {{$json.field_id}} — {{$json.disease}}",
+        "text": "={{$json.advisory_en}}"
+      },
+      "id": "email-1",
+      "name": "Escalate to Agronomist",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1740, 280]
+    },
+    {
+      "parameters": {
+        "url": "{{$env.SLACK_ALERTS_WEBHOOK}}",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "Inference pipeline FAILED for job {{$node[\"Enqueue Inference Job\"].json[\"job_id\"]}}"}
+          ]
+        }
+      },
+      "id": "http-5",
+      "name": "Dead Letter Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 400]
+    }
+  ],
+  "connections": {
+    "New Satellite Tile": {"main": [[{"node": "Enqueue Inference Job", "type": "main", "index": 0}]]},
+    "Enqueue Inference Job": {"main": [[{"node": "Wait for Inference", "type": "main", "index": 0}]]},
+    "Wait for Inference": {"main": [[{"node": "Poll Job Status", "type": "main", "index": 0}]]},
+    "Poll Job Status": {"main": [[{"node": "Succeeded?", "type": "main", "index": 0}]]},
+    "Succeeded?": {"main": [
+      [{"node": "Fetch Detection", "type": "main", "index": 0}],
+      [{"node": "Dead Letter Notify", "type": "main", "index": 0}]
+    ]},
+    "Fetch Detection": {"main": [[{"node": "Critical?", "type": "main", "index": 0}]]},
+    "Critical?": {"main": [
+      [{"node": "Send WhatsApp Alert", "type": "main", "index": 0},
+       {"node": "Escalate to Agronomist", "type": "main", "index": 0}],
+      [{"node": "Send WhatsApp Alert", "type": "main", "index": 0}]
+    ]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "meta": {
+    "description": "CropVision AI — orchestrates satellite tile ingestion, inference, and severity-based alert routing. All secrets via env vars.",
+    "env_required": [
+      "CROPVISION_API", "CROPVISION_TOKEN", "CROPVISION_INGEST_KEY",
+      "TWILIO_SID", "TWILIO_WHATSAPP_FROM",
+      "ALERT_FROM_EMAIL", "AGRONOMIST_EMAIL", "SLACK_ALERTS_WEBHOOK"
+    ]
+  }
+}
