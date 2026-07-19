@@ -15,8 +15,6 @@ import logging
 import re
 from typing import Optional
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
-
 log = logging.getLogger("cropvision.vision")
 
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
@@ -89,6 +87,12 @@ async def analyze_crop_image(image_b64: str, crop_hint: str = "", session_id: st
     # normalize (strip data: prefix if present)
     if image_b64.startswith("data:"):
         image_b64 = image_b64.split(",", 1)[-1]
+
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+    except ModuleNotFoundError:
+        log.warning("Emergent integration package not installed; using offline fallback")
+        return _fallback(image_b64, "emergent integration unavailable")
 
     try:
         chat = LlmChat(

@@ -16,8 +16,6 @@ import re
 from typing import Any, Optional, Callable, Awaitable
 from dataclasses import dataclass, field, asdict
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-
 log = logging.getLogger("cropvision.langgraph")
 
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
@@ -63,6 +61,12 @@ def _extract_json(text: str) -> Optional[dict]:
 async def _call(system: str, user: str, session_id: str) -> str:
     if not EMERGENT_LLM_KEY:
         return ""
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+    except ModuleNotFoundError:
+        log.warning("Emergent integration package not installed; LangGraph fallback only")
+        return ""
+
     try:
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
