@@ -23,6 +23,15 @@ from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
+
+def _build_client() -> AsyncIOMotorClient:
+    return AsyncIOMotorClient(
+        MONGO_URL,
+        serverSelectionTimeoutMS=20000,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+    )
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
@@ -49,7 +58,7 @@ logging.basicConfig(level=logging.INFO,
 # ---------- Mongo ----------
 MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
-_client = AsyncIOMotorClient(MONGO_URL)
+_client = _build_client()
 _db = _client[DB_NAME]
 
 
