@@ -137,7 +137,7 @@ Frontend env sample: `frontend/.env.example`
 1. Create a new Python web service on Render and connect it to the GitHub repository.
 2. Set the service root to the project repository and use the existing `render.yaml` file.
 3. Build command: `pip install -r backend/requirements.txt`
-4. Start command: `uvicorn backend.server:app --host 0.0.0.0 --port 10000`
+4. Start command: `uvicorn backend.server:app --host 0.0.0.0 --port $PORT`
 5. Configure required environment variables from `backend/.env.example`.
 6. Set `CORS_ORIGINS` to include your frontend origin, for example `https://<frontend-project>.vercel.app`.
 
